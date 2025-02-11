@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 
-#Function equation takes in seconds as input and return the theoretical voltages for each multiple of the time constant that exists within the interval (time_constant, seconds)
+#Function equation takes in seconds as input and returns the theoretical voltages for each multiple of the time constant that exists within the interval (time_constant, seconds)
 def equation(seconds):
     emf = 4.5
     resistance = 15000
@@ -27,7 +27,7 @@ def equation(seconds):
 
     return theoretical_voltages
 
-
+#Function grab_v0 takes the midpoint in as input and returns the value of the voltage at the time of the midpoint, at the beginning of discharge
 def grab_v0(midpoint):
     df = pd.read_csv('RC Lab Data - Sheet1.csv', header=0)
 
@@ -35,7 +35,8 @@ def grab_v0(midpoint):
 
     return row['Voltage'].tolist()[0]
 
-
+#Function remove_outliers takes in a dictionary voltages and the Pandas datafram df as input and returns a list of all of the dataframes with outliers removed
+#Outliers are rows with times that deviate from the target time by more than 10 seconds
 def remove_outliers(voltages, df):
     rows = []
     for time, voltage in voltages.items():
@@ -53,6 +54,7 @@ def remove_outliers(voltages, df):
 
     return rows
 
+#Function average_time takes in a list of dataframes matches as input and returns a list of the average times in each dataframe
 def average_time(matches):
     average_times = []
 
@@ -62,6 +64,7 @@ def average_time(matches):
     
     return average_times
      
+#Function main takes nothing in as input and strings everything together
 def main():
     df = pd.read_csv('RC Lab Data - Sheet1.csv', header=0)
 

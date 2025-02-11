@@ -33,8 +33,6 @@ def grab_v0(midpoint):
 
     row = df[df['Time'] == midpoint]
 
-    print(row['Voltage'].tolist()[0])
-
     return row['Voltage'].tolist()[0]
 
 

@@ -79,8 +79,8 @@ def main():
 
     means = average_time(matches)
 
-    print("Expected --> Observed")
+    print("Voltage --> Expected Time --> Observed Time")
     for i in range(len(means)):
-        print(f"{list(voltages.keys())[i]} --> {means[i]}")
+        print(f"{list(voltages.values())[i]} --> {list(voltages.keys())[i]} --> {round(means[i], 3)}")
 
 main()

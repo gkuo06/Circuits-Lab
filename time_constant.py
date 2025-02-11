@@ -23,7 +23,7 @@ def equation(seconds):
         theoretical_voltages[time] = (emf * (1 - np.exp(-time/time_constant)))
     
     for time in discharge_times:
-        theoretical_voltages[time] = (v0 * np.exp(-time/time_constant))
+        theoretical_voltages[time] = (v0 * np.exp(-(time - (seconds//2))/time_constant))
 
     return theoretical_voltages
 
@@ -33,23 +33,53 @@ def grab_v0(midpoint):
 
     row = df[df['Time'] == midpoint]
 
-    return row['Time'].tolist()[0]
+    print(row['Voltage'].tolist()[0])
 
-df = pd.read_csv('RC Lab Data - Sheet1.csv', header=0)
-
-voltages = equation(70)
-
-df["Voltage"] = pd.to_numeric(df["Voltage"], errors='coerce')
-
-print(voltages)
-
-for target_voltage in voltages.values():
-    time_row = df[abs(df['Voltage'] - target_voltage) <= 0.001]
-
-    print(time_row)
+    return row['Voltage'].tolist()[0]
 
 
+def remove_outliers(voltages, df):
+    rows = []
+    for time, voltage in voltages.items():
+        time_row = df[abs(df['Voltage'] - voltage) <= 0.001]
 
-        
+        dropped_indices = []
 
+        for i in range(len(time_row['Time'].tolist())):
+            if (abs(time_row['Time'].tolist()[i] - time) > 10):
+                dropped_indices.append(int(time_row.index[i]))
 
+        time_row = time_row.drop(dropped_indices, errors='ignore')
+
+        rows.append(time_row)
+
+    return rows
+
+def average_time(matches):
+    average_times = []
+
+    for row in matches:
+        total = sum(row['Time'].tolist())
+        average_times.append(total / len(row['Time'].tolist()))
+    
+    return average_times
+     
+def main():
+    df = pd.read_csv('RC Lab Data - Sheet1.csv', header=0)
+
+    seconds = 70
+
+    voltages = equation(seconds)
+
+    matches = remove_outliers(voltages, df)
+
+    for match in matches:
+        print(f"{match}\n")
+
+    means = average_time(matches)
+
+    print("Expected --> Observed")
+    for i in range(len(means)):
+        print(f"{list(voltages.keys())[i]} --> {means[i]}")
+
+main()
